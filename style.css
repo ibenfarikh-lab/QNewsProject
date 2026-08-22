@@ -1,0 +1,5 @@
+/* Anda bisa menambahkan kode CSS kustom di sini jika tidak ingin semuanya diatur oleh Tailwind */
+body {
+    margin: 0;
+    padding: 0;
+}

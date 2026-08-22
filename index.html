@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Berita - Inspirasi Indonesia</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Hubungkan file CSS eksternal (opsional jika ada tambahan style kustom) -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 font-sans text-gray-800">
+
+    <!-- Top Bar -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div class="container mx-auto px-4 flex justify-between items-center h-16">
+            <div class="flex items-center space-x-3">
+                <span class="text-2xl font-black tracking-wider text-red-600 uppercase">PORTAL<span class="text-gray-900">NEWS</span></span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative hidden md:block">
+                    <input type="text" placeholder="Cari berita..." class="bg-gray-100 text-sm rounded-full px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-red-500 w-64">
+                    <i class="fa-solid fa-search absolute left-3.5 top-3 text-gray-400 text-sm"></i>
+                </div>
+                <button class="bg-red-600 text-white px-4 py-2 rounded text-sm font-semibold hover:bg-red-700 transition">Masuk</button>
+            </div>
+        </div>
+
+        <nav class="bg-white border-t border-gray-100 shadow-sm overflow-x-auto whitespace-nowrap">
+            <div class="container mx-auto px-4 flex space-x-6 text-sm font-medium text-gray-700">
+                <a href="#" class="py-3 text-red-600 border-b-2 border-red-600">Terbaru</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Nasional</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Megapolitan</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Ekonomi</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Bola</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Tekno</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Sains</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Lifestyle</a>
+                <a href="#" class="py-3 hover:text-red-600 transition">Travel</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto px-4 py-6">
+        <!-- Breaking News / Fokus Slider dengan Thumbnail -->
+        <div class="bg-red-50 border-l-4 border-red-600 p-3 mb-6 flex items-center justify-between text-sm overflow-hidden relative shadow-sm rounded-r">
+            <div class="flex items-center space-x-3 w-full">
+                <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider shrink-0">Fokus</span>
+                <div class="relative w-full overflow-hidden h-12 flex items-center">
+                    <div id="ticker-container" class="flex flex-col transition-transform duration-500 ease-in-out w-full">
+                        <div class="flex items-center space-x-3 h-12 shrink-0 cursor-pointer group">
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-9 h-9 object-cover rounded shrink-0">
+                            <span class="font-medium text-red-900 group-hover:underline text-xs md:text-sm truncate">Pemerintah Resmi Meluncurkan Transformasi Digital Nasional untuk Sektor Publik 2026.</span>
+                        </div>
+                        <div class="flex items-center space-x-3 h-12 shrink-0 cursor-pointer group">
+                            <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-9 h-9 object-cover rounded shrink-0">
+                            <span class="font-medium text-red-900 group-hover:underline text-xs md:text-sm truncate">Strategi UMKM Go Digital untuk Menembus Pasar Ekspor Global Tahun Ini.</span>
+                        </div>
+                        <div class="flex items-center space-x-3 h-12 shrink-0 cursor-pointer group">
+                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-9 h-9 object-cover rounded shrink-0">
+                            <span class="font-medium text-red-900 group-hover:underline text-xs md:text-sm truncate">Rekomendasi Destinasi Wisata Tersembunyi di Indonesia Timur yang Memukau.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Konten Berita lainnya bisa ditaruh di sini -->
+    </main>
+
+    <!-- Panggil file JavaScript eksternal di bawah -->
+    <script src="script.js"></script>
+</body>
+</html>
