@@ -200,14 +200,15 @@
         &copy; 2026 Portal News Indonesia. All Rights Reserved.
     </footer>
 
-    <!-- Modal Tambah Post Berita -->
+    <!-- Modal Tambah / Edit Post Berita -->
     <div id="modalPost" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-lg max-w-lg w-full p-6 shadow-xl relative">
             <div class="flex justify-between items-center mb-4 border-b pb-3">
-                <h3 class="font-bold text-lg text-gray-900">Buat Berita / Post Baru</h3>
+                <h3 id="modalTitleText" class="font-bold text-lg text-gray-900">Buat Berita / Post Baru</h3>
                 <button onclick="tutupModalPost()" class="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
             </div>
             <form id="formPostBerita" onsubmit="submitBerita(event)" class="space-y-4">
+                <input type="hidden" id="editPostId" value="">
                 <div>
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Judul Berita</label>
                     <input type="text" id="postJudul" required placeholder="Masukkan judul berita..." class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
@@ -228,10 +229,10 @@
                     <label class="block text-xs font-semibold text-gray-600 mb-1">Link URL Gambar (Opsional)</label>
                     <input type="url" id="postUrlGambar" placeholder="https://images.unsplash.com/..." class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
                 </div>
-                <!-- Opsi 2: Upload File / Kamera Lokal -->
+                <!-- Opsi 2: Upload File / Storage Lokal -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Atau Unggah Foto / Kamera (Opsional)</label>
-                    <input type="file" id="postGambarFile" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 file:mr-4 file:py-1 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Atau Unggah dari Perangkat / Galeri (Opsional)</label>
+                    <input type="file" id="postGambarFile" accept="image/*" onchange="handleImageUpload(event)" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 file:mr-4 file:py-1 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                     <input type="hidden" id="postGambarBase64" value="">
                 </div>
                 <div>
