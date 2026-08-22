@@ -1,5 +1,39 @@
+// Data berita default awal (jika LocalStorage masih kosong)
+const beritaDefault = [
+    {
+        id: 101,
+        judul: "Strategi Jitu Pelaku Usaha Kecil Menghadapi Persaingan Pasar Digital",
+        kategori: "EKONOMI",
+        gambar: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=500&q=80",
+        isi: "Strategi Jitu Pelaku Usaha Kecil Menghadapi Persaingan Pasar Digital di era modern saat ini sangat menentukan kelangsungan bisnis...",
+        waktu: "2 jam yang lalu"
+    },
+    {
+        id: 102,
+        judul: "Menikmati Keindahan Pantai Eksotis di Wilayah Timur Nusantara",
+        kategori: "TRAVEL",
+        gambar: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=500&q=80",
+        isi: "Menikmati Keindahan Pantai Eksotis di Wilayah Timur Nusantara memberikan pengalaman liburan yang tak terlupakan bagi para pelancong...",
+        waktu: "4 jam yang lalu"
+    },
+    {
+        id: 103,
+        judul: "Perkembangan Riset Energi Terbarukan untuk Masa Depan Berkelanjutan",
+        kategori: "SAINS & TECH",
+        gambar: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=500&q=80",
+        isi: "Perkembangan Riset Energi Terbarukan untuk Masa Depan Berkelanjutan terus menunjukkan hasil positif dari berbagai universitas...",
+        waktu: "6 jam yang lalu"
+    }
+];
+
 document.addEventListener("DOMContentLoaded", function() {
     console.log("Portal Berita siap dijalankan!");
+    
+    // Inisialisasi LocalStorage jika belum ada data sama sekali
+    if (!localStorage.getItem('qnews_posts')) {
+        localStorage.setItem('qnews_posts', JSON.stringify(beritaDefault));
+    }
+
     muatBeritaLokal();
 
     const searchInput = document.querySelector('input[placeholder="Cari berita..."]');
@@ -27,7 +61,7 @@ function tutupModalPost() {
     if (modal) modal.classList.add('hidden');
 }
 
-// Fungsi Tangkap/Unggah Gambar dari Galeri atau Kamera
+// Fungsi Tangkap/Unggah Gambar dari Galeri atau Penyimpanan HP
 function handleImageUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -86,7 +120,7 @@ function submitBerita(event) {
     let daftarBerita = JSON.parse(localStorage.getItem('qnews_posts')) || [];
 
     if (editId) {
-        // Mode Edit: Cari dan perbarui data berdasarkan ID
+        // Mode Edit Pos
         let index = daftarBerita.findIndex(b => b.id == editId);
         if (index !== -1) {
             let gambarFinal = base64Img || urlGambar || daftarBerita[index].gambar;
@@ -97,7 +131,7 @@ function submitBerita(event) {
         }
         alert("Berita berhasil diperbarui!");
     } else {
-        // Mode Tambah Baru
+        // Mode Tambah Pos Baru
         let gambarFinal = base64Img || urlGambar || "https://images.unsplash.com/photo-1585829365295-ab7cd400c167?auto=format&fit=crop&w=500&q=80";
         const beritaBaru = {
             id: Date.now(),
@@ -118,7 +152,7 @@ function submitBerita(event) {
     muatBeritaLokal();
 }
 
-// Fungsi Mulai Edit Post (Masukkan data ke Modal)
+// Fungsi Mulai Edit Post
 function mulaiEditPost(id) {
     let daftarBerita = JSON.parse(localStorage.getItem('qnews_posts')) || [];
     let berita = daftarBerita.find(b => b.id == id);
@@ -147,19 +181,17 @@ function hapusPost(id) {
     }
 }
 
-// Fungsi untuk merender berita dari LocalStorage ke HTML
+// Fungsi Render Seluruh Berita (Lama & Baru) ke HTML
 function muatBeritaLokal() {
     const container = document.getElementById('container-berita-lainnya');
     if (!container) return;
 
     let daftarBerita = JSON.parse(localStorage.getItem('qnews_posts')) || [];
-    
-    const elemenDinamis = container.querySelectorAll('.berita-lokal-item');
-    elemenDinamis.forEach(el => el.remove());
+    container.innerHTML = ""; // Bersihkan kontainer agar tidak duplikat
 
     daftarBerita.forEach(berita => {
         const postCard = document.createElement('div');
-        postCard.className = "space-y-3 group bg-white p-3 rounded-lg shadow-sm border border-red-100 berita-lokal-item flex flex-col justify-between";
+        postCard.className = "space-y-3 group bg-white p-3 rounded-lg shadow-sm border border-red-100 flex flex-col justify-between";
         postCard.innerHTML = `
             <div>
                 <img src="${berita.gambar}" alt="News" class="w-full h-48 object-cover rounded-lg mb-2">
@@ -177,6 +209,6 @@ function muatBeritaLokal() {
                 </div>
             </div>
         `;
-        container.prepend(postCard);
+        container.appendChild(postCard);
     });
 }
