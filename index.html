@@ -7,7 +7,6 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Hubungkan file CSS eksternal (opsional jika ada tambahan style kustom) -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-100 font-sans text-gray-800">
@@ -43,33 +42,81 @@
     </header>
 
     <main class="container mx-auto px-4 py-6">
-        <!-- Breaking News / Fokus Slider dengan Thumbnail -->
-        <div class="bg-red-50 border-l-4 border-red-600 p-3 mb-6 flex items-center justify-between text-sm overflow-hidden relative shadow-sm rounded-r">
-            <div class="flex items-center space-x-3 w-full">
-                <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider shrink-0">Fokus</span>
-                <div class="relative w-full overflow-hidden h-12 flex items-center">
-                    <div id="ticker-container" class="flex flex-col transition-transform duration-500 ease-in-out w-full">
-                        <div class="flex items-center space-x-3 h-12 shrink-0 cursor-pointer group">
-                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-9 h-9 object-cover rounded shrink-0">
-                            <span class="font-medium text-red-900 group-hover:underline text-xs md:text-sm truncate">Pemerintah Resmi Meluncurkan Transformasi Digital Nasional untuk Sektor Publik 2026.</span>
-                        </div>
-                        <div class="flex items-center space-x-3 h-12 shrink-0 cursor-pointer group">
-                            <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-9 h-9 object-cover rounded shrink-0">
-                            <span class="font-medium text-red-900 group-hover:underline text-xs md:text-sm truncate">Strategi UMKM Go Digital untuk Menembus Pasar Ekspor Global Tahun Ini.</span>
-                        </div>
-                        <div class="flex items-center space-x-3 h-12 shrink-0 cursor-pointer group">
-                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-9 h-9 object-cover rounded shrink-0">
-                            <span class="font-medium text-red-900 group-hover:underline text-xs md:text-sm truncate">Rekomendasi Destinasi Wisata Tersembunyi di Indonesia Timur yang Memukau.</span>
+        
+        <!-- Teks Berjalan (Marquee) ke Kiri dengan Thumbnail Foto -->
+        <div class="bg-red-50 border-l-4 border-red-600 p-2 mb-6 flex items-center shadow-sm rounded-r overflow-hidden">
+            <span class="bg-red-600 text-white text-xs font-bold px-2.5 py-1.5 rounded uppercase tracking-wider shrink-0 z-10 mr-3">Fokus</span>
+            
+            <marquee behavior="scroll" direction="left" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();" class="flex items-center">
+                <div class="flex items-center space-x-8 text-sm font-medium text-red-900">
+                    
+                    <!-- Berita 1 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:underline inline-flex">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-7 h-7 object-cover rounded">
+                        <span>Pemerintah Resmi Meluncurkan Transformasi Digital Nasional untuk Sektor Publik 2026.</span>
+                    </div>
+
+                    <!-- Berita 2 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:underline inline-flex">
+                        <img src="https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-7 h-7 object-cover rounded">
+                        <span>Strategi UMKM Go Digital untuk Menembus Pasar Ekspor Global Tahun Ini.</span>
+                    </div>
+
+                    <!-- Berita 3 -->
+                    <div class="flex items-center space-x-2 cursor-pointer hover:underline inline-flex">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=100&q=80" alt="Thumb" class="w-7 h-7 object-cover rounded">
+                        <span>Rekomendasi Destinasi Wisata Tersembunyi di Indonesia Timur yang Memukau.</span>
+                    </div>
+
+                </div>
+            </marquee>
+        </div>
+
+        <!-- Grid Layout: Headline & Trending -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            <div class="lg:col-span-2 bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition">
+                <div class="relative">
+                    <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80" alt="Headline" class="w-full h-80 object-cover">
+                    <span class="absolute bottom-3 left-3 bg-red-600 text-white text-xs font-bold px-2.5 py-1 rounded">TEKNO</span>
+                </div>
+                <div class="p-6">
+                    <span class="text-xs text-gray-500 block mb-1">Minggu, 23 Agustus 2026 | 10:00 WIB</span>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-3 hover:text-red-600 cursor-pointer">
+                        Masa Depan Kecerdasan Buatan: Bagaimana Algoritma Baru Mengubah Lanskap Industri Kreatif Global
+                    </h1>
+                    <p class="text-gray-600 text-sm leading-relaxed">
+                        Perkembangan teknologi kecerdasan buatan kini memasuki babak baru dengan efisiensi komputasi yang jauh lebih tinggi, membawa angin segar sekaligus tantangan baru bagi para kreator di seluruh dunia.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg p-5 shadow-sm">
+                <div class="border-b border-gray-200 pb-3 mb-4 flex items-center justify-between">
+                    <h2 class="font-bold text-lg text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-red-600"></i> Terpopuler
+                    </h2>
+                </div>
+                <div class="space-y-4 divide-y divide-gray-100">
+                    <div class="flex items-start space-x-3 pt-3 first:pt-0">
+                        <span class="text-2xl font-black text-gray-300">01</span>
+                        <div>
+                            <span class="text-xs text-red-600 font-semibold">Nasional</span>
+                            <h3 class="text-sm font-bold text-gray-800 hover:text-red-600 cursor-pointer leading-snug mt-0.5">
+                                Kebijakan Baru Transportasi Publik Terintegrasi Mulai Diterapkan Pekan Ini
+                            </h3>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Konten Berita lainnya bisa ditaruh di sini -->
     </main>
 
-    <!-- Panggil file JavaScript eksternal di bawah -->
+    <footer class="bg-gray-900 text-white pt-10 pb-6 mt-12 text-center text-xs text-gray-500">
+        &copy; 2026 Portal News Indonesia. All Rights Reserved.
+    </footer>
+
+    <!-- Hubungkan script.js -->
     <script src="script.js"></script>
 </body>
 </html>
