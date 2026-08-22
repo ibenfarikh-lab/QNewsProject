@@ -223,8 +223,14 @@
                         <option value="BOLA">Bola</option>
                     </select>
                 </div>
+                <!-- Opsi 1: Paste Link URL Gambar -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1">Foto Berita (Ambil Kamera / Unggah File)</label>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Link URL Gambar (Opsional)</label>
+                    <input type="url" id="postUrlGambar" placeholder="https://images.unsplash.com/..." class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500">
+                </div>
+                <!-- Opsi 2: Upload File / Kamera Lokal -->
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Atau Unggah Foto / Kamera (Opsional)</label>
                     <input type="file" id="postGambarFile" accept="image/*" capture="environment" onchange="handleImageUpload(event)" class="w-full bg-gray-50 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 file:mr-4 file:py-1 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                     <input type="hidden" id="postGambarBase64" value="">
                 </div>
