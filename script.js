@@ -43,11 +43,12 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC ---
+// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (DIPERBARUI) ---
 let scrollIndicator, scrollThumb, hideScrollTimeout;
 let isThumbDragging = false;
 let thumbStartY = 0;
 let startPageScrollY = 0;
+let lastScrollTop = 0;
 
 function initCustomScrollbar() {
     scrollIndicator = document.getElementById('custom-scroll-indicator');
@@ -72,6 +73,18 @@ function handlePageScroll() {
     clearTimeout(hideScrollTimeout);
     
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    
+    // Perbaikan bug arah panah menyesuaikan arah scroll user
+    const arrowIcon = document.getElementById('scroll-arrow-icon');
+    if (arrowIcon) {
+        if (scrollTop > lastScrollTop) {
+            arrowIcon.className = 'fa-solid fa-chevron-down text-[9px] text-white pointer-events-none';
+        } else if (scrollTop < lastScrollTop) {
+            arrowIcon.className = 'fa-solid fa-chevron-up text-[9px] text-white pointer-events-none';
+        }
+    }
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+
     const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const trackHeight = scrollIndicator.clientHeight - scrollThumb.clientHeight;
     
