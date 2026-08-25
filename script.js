@@ -43,10 +43,11 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (GLUED TO FINGER) ---
+// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (PERFECT TOUCH SYNC) ---
 let scrollIndicator, scrollThumb, hideScrollTimeout;
 let isThumbDragging = false;
-let touchOffsetY = 0;
+let startTouchY = 0;
+let startThumbTop = 0;
 let lastScrollTop = 0;
 
 function initCustomScrollbar() {
@@ -67,8 +68,7 @@ function initCustomScrollbar() {
         const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
         
         if (maxTop > 0 && docHeight > 0) {
-            const clickYCentered = clickY - (thumbHeight / 2);
-            const scrollRatio = Math.max(0, Math.min(1, clickYCentered / maxTop));
+            const scrollRatio = Math.max(0, Math.min(1, clickY / maxTop));
             window.scrollTo({
                 top: scrollRatio * docHeight,
                 behavior: 'smooth'
@@ -123,11 +123,8 @@ function handlePageScroll() {
 
 function onThumbDragStart(e) {
     isThumbDragging = true;
-    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-    const thumbRect = scrollThumb.getBoundingClientRect();
-    
-    // Simpan jarak titik sentuh jari dari bagian atas tombol thumb
-    touchOffsetY = clientY - thumbRect.top;
+    startTouchY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    startThumbTop = parseFloat(scrollThumb.style.top) || scrollThumb.offsetTop;
     
     if (scrollIndicator) scrollIndicator.style.opacity = '1';
     clearTimeout(hideScrollTimeout);
@@ -138,16 +135,15 @@ function onThumbDragStart(e) {
 function onThumbDragMove(e) {
     if (!isThumbDragging || !scrollIndicator || !scrollThumb) return;
     
-    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-    const trackRect = scrollIndicator.getBoundingClientRect();
+    const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const deltaY = currentY - startTouchY;
     
     const trackHeight = scrollIndicator.clientHeight;
     const thumbHeight = scrollThumb.clientHeight;
     const maxTop = trackHeight - thumbHeight;
     
     if (maxTop > 0) {
-        // Posisi baru thumb terkunci pas di bawah jari mengikuti pergerakan
-        let newTop = clientY - trackRect.top - touchOffsetY;
+        let newTop = startThumbTop + deltaY;
         newTop = Math.max(0, Math.min(maxTop, newTop));
         scrollThumb.style.top = newTop + 'px';
         
