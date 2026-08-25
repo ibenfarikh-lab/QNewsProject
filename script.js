@@ -952,7 +952,7 @@ async function renderHomepage(container) {
         if (runningTextContainer) {
             const top3Posts = entries.slice(0, 3);
             let runningHTML = "";
-            top3Posts.entry.forEach(entry => {
+            top3Posts.forEach(entry => {
                 const title = entry.title.$t;
                 const link = entry.link.find(l => l.rel === 'alternate')?.href || '#';
                 runningHTML += `<a href="${link}" class="hover:underline hover:text-red-600 dark:hover:text-red-400 transition flex items-center gap-2 shrink-0"><i class="fa-solid fa-circle text-[5px] text-red-600"></i><span>${title}</span></a>`;
