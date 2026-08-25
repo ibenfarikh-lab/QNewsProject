@@ -43,12 +43,10 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (FIXED TOUCH TRACKING) ---
+// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (GLUED TO FINGER) ---
 let scrollIndicator, scrollThumb, hideScrollTimeout;
 let isThumbDragging = false;
-let thumbStartY = 0;
-let startThumbTop = 0;
-let startPageScrollY = 0;
+let touchOffsetY = 0;
 let lastScrollTop = 0;
 
 function initCustomScrollbar() {
@@ -64,9 +62,13 @@ function initCustomScrollbar() {
         const rect = scrollIndicator.getBoundingClientRect();
         const clickY = e.clientY - rect.top;
         const trackHeight = scrollIndicator.clientHeight;
+        const thumbHeight = scrollThumb.clientHeight;
+        const maxTop = trackHeight - thumbHeight;
         const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-        if (trackHeight > 0 && docHeight > 0) {
-            const scrollRatio = clickY / trackHeight;
+        
+        if (maxTop > 0 && docHeight > 0) {
+            const clickYCentered = clickY - (thumbHeight / 2);
+            const scrollRatio = Math.max(0, Math.min(1, clickYCentered / maxTop));
             window.scrollTo({
                 top: scrollRatio * docHeight,
                 behavior: 'smooth'
@@ -103,10 +105,12 @@ function handlePageScroll() {
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
 
     const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const trackHeight = scrollIndicator.clientHeight - scrollThumb.clientHeight;
+    const trackHeight = scrollIndicator.clientHeight;
+    const thumbHeight = scrollThumb.clientHeight;
+    const maxTop = trackHeight - thumbHeight;
     
-    if (docHeight > 0) {
-        const thumbTop = (scrollTop / docHeight) * trackHeight;
+    if (docHeight > 0 && maxTop > 0) {
+        const thumbTop = (scrollTop / docHeight) * maxTop;
         scrollThumb.style.top = thumbTop + 'px';
     }
 
@@ -119,9 +123,11 @@ function handlePageScroll() {
 
 function onThumbDragStart(e) {
     isThumbDragging = true;
-    thumbStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-    startThumbTop = scrollThumb.offsetTop; // Simpan posisi awal thumb
-    startPageScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const thumbRect = scrollThumb.getBoundingClientRect();
+    
+    // Simpan jarak titik sentuh jari dari bagian atas tombol thumb
+    touchOffsetY = clientY - thumbRect.top;
     
     if (scrollIndicator) scrollIndicator.style.opacity = '1';
     clearTimeout(hideScrollTimeout);
@@ -132,21 +138,24 @@ function onThumbDragStart(e) {
 function onThumbDragMove(e) {
     if (!isThumbDragging || !scrollIndicator || !scrollThumb) return;
     
-    const currentY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-    const deltaY = currentY - thumbStartY;
+    const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    const trackRect = scrollIndicator.getBoundingClientRect();
     
-    const trackHeight = scrollIndicator.clientHeight - scrollThumb.clientHeight;
-    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const trackHeight = scrollIndicator.clientHeight;
+    const thumbHeight = scrollThumb.clientHeight;
+    const maxTop = trackHeight - thumbHeight;
     
-    if (trackHeight > 0 && docHeight > 0) {
-        // Geser posisi thumb secara langsung mengikuti pergerakan jari
-        let newThumbTop = startThumbTop + deltaY;
-        newThumbTop = Math.max(0, Math.min(trackHeight, newThumbTop)); // Batasi agar tidak keluar jalur
-        scrollThumb.style.top = newThumbTop + 'px';
+    if (maxTop > 0) {
+        // Posisi baru thumb terkunci pas di bawah jari mengikuti pergerakan
+        let newTop = clientY - trackRect.top - touchOffsetY;
+        newTop = Math.max(0, Math.min(maxTop, newTop));
+        scrollThumb.style.top = newTop + 'px';
         
-        // Geser halaman sesuai posisi thumb
-        const scrollRatio = newThumbTop / trackHeight;
-        window.scrollTo(0, scrollRatio * docHeight);
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        if (docHeight > 0) {
+            const scrollRatio = newTop / maxTop;
+            window.scrollTo(0, scrollRatio * docHeight);
+        }
     }
     
     e.preventDefault();
