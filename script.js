@@ -12,7 +12,7 @@ let startPos = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
 
-// Inisialisasi Tema Manual (Dark/Light) dari LocalStorage[span_2](start_span)[span_2](end_span)
+// Inisialisasi Tema Manual (Dark/Light) dari LocalStorage[span_1](start_span)[span_1](end_span)
 (function() {
     const savedTheme = localStorage.getItem('lintas_theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -32,7 +32,7 @@ function toggleManualTheme() {
     }
 }
 
-// Script Reading Progress Bar[span_3](start_span)[span_3](end_span)
+// Script Reading Progress Bar[span_2](start_span)[span_2](end_span)
 window.addEventListener('scroll', function() {
     const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -43,7 +43,7 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (DIPERBARUI) ---
+// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (FRIENDLY & DYNAMIC ARROW) ---
 let scrollIndicator, scrollThumb, hideScrollTimeout;
 let isThumbDragging = false;
 let thumbStartY = 0;
@@ -57,6 +57,22 @@ function initCustomScrollbar() {
 
     window.addEventListener('scroll', handlePageScroll, {passive: true});
     
+    // Fitur Tap-to-Scroll pada track scrollbar
+    scrollIndicator.addEventListener('click', function(e) {
+        if (e.target === scrollThumb || scrollThumb.contains(e.target)) return;
+        const rect = scrollIndicator.getBoundingClientRect();
+        const clickY = e.clientY - rect.top;
+        const trackHeight = scrollIndicator.clientHeight;
+        const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        if (trackHeight > 0 && docHeight > 0) {
+            const scrollRatio = clickY / trackHeight;
+            window.scrollTo({
+                top: scrollRatio * docHeight,
+                behavior: 'smooth'
+            });
+        }
+    });
+
     scrollThumb.addEventListener('touchstart', onThumbDragStart, {passive: false});
     document.addEventListener('touchmove', onThumbDragMove, {passive: false});
     document.addEventListener('touchend', onThumbDragEnd);
@@ -69,18 +85,18 @@ function initCustomScrollbar() {
 function handlePageScroll() {
     if (!scrollIndicator || !scrollThumb || isThumbDragging) return;
     
-    scrollIndicator.style.opacity = '1';
+    scrollIndicator.style.opacity = '0.9';
     clearTimeout(hideScrollTimeout);
     
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
-    // Perbaikan bug arah panah menyesuaikan arah scroll user[span_4](start_span)[span_4](end_span)
+    // Deteksi arah panah otomatis (naik / turun)[span_3](start_span)[span_3](end_span)
     const arrowIcon = document.getElementById('scroll-arrow-icon');
     if (arrowIcon) {
         if (scrollTop > lastScrollTop) {
-            arrowIcon.className = 'fa-solid fa-chevron-down text-[9px] text-white pointer-events-none';
+            arrowIcon.className = 'fa-solid fa-chevron-down text-[10px] text-white pointer-events-none';
         } else if (scrollTop < lastScrollTop) {
-            arrowIcon.className = 'fa-solid fa-chevron-up text-[9px] text-white pointer-events-none';
+            arrowIcon.className = 'fa-solid fa-chevron-up text-[10px] text-white pointer-events-none';
         }
     }
     lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
@@ -95,9 +111,9 @@ function handlePageScroll() {
 
     hideScrollTimeout = setTimeout(() => {
         if (!isThumbDragging) {
-            scrollIndicator.style.opacity = '0';
+            scrollIndicator.style.opacity = '0.4';
         }
-    }, 5000);
+    }, 4000);
 }
 
 function onThumbDragStart(e) {
@@ -133,8 +149,8 @@ function onThumbDragEnd() {
     isThumbDragging = false;
     
     hideScrollTimeout = setTimeout(() => {
-        if (scrollIndicator) scrollIndicator.style.opacity = '0';
-    }, 3000);
+        if (scrollIndicator) scrollIndicator.style.opacity = '0.4';
+    }, 2500);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
