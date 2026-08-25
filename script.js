@@ -12,7 +12,7 @@ let startPos = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
 
-// Inisialisasi Tema Manual (Dark/Light) dari LocalStorage
+// Inisialisasi Tema Manual (Dark/Light) dari LocalStorage[span_2](start_span)[span_2](end_span)
 (function() {
     const savedTheme = localStorage.getItem('lintas_theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -32,7 +32,7 @@ function toggleManualTheme() {
     }
 }
 
-// Script Reading Progress Bar
+// Script Reading Progress Bar[span_3](start_span)[span_3](end_span)
 window.addEventListener('scroll', function() {
     const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -74,7 +74,7 @@ function handlePageScroll() {
     
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
-    // Perbaikan bug arah panah menyesuaikan arah scroll user
+    // Perbaikan bug arah panah menyesuaikan arah scroll user[span_4](start_span)[span_4](end_span)
     const arrowIcon = document.getElementById('scroll-arrow-icon');
     if (arrowIcon) {
         if (scrollTop > lastScrollTop) {
