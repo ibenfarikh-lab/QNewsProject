@@ -1,3 +1,4 @@
+// --- VARIABEL GLOBAL ---
 let headlineSlides = [];
 let currentSlideIndex = 1;
 let slideInterval;
@@ -11,6 +12,11 @@ let isDragging = false;
 let startPos = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
+
+// Variabel Khusus Halaman All Pos
+let allPosAllItems = [];
+let allPosDisplayedCount = 0;
+const allPosBatchSize = 10;
 
 // Inisialisasi Tema Manual (Dark/Light) dari LocalStorage
 (function() {
@@ -43,6 +49,132 @@ window.addEventListener('scroll', function() {
     }
 });
 
+// --- INISIALISASI HALAMAN SAAT DOM DIMUAT ---
+document.addEventListener("DOMContentLoaded", async function() {
+    updateWeatherByIP();
+    initAutoCloseAdOnHomepage();
+    highlightActiveNavLink();
+
+    const path = window.location.pathname;
+    const mainArea = document.getElementById('dynamic-content-area');
+    if (!mainArea) return;
+
+    if (path.includes('/search/label/')) {
+        const parts = path.split('/search/label/');
+        let catName = decodeURIComponent(parts[1].replace(/\/$/, '').split('?')[0]);
+        await renderCategoryPage(catName, mainArea);
+    } else if (path.includes('/p/all-pos.html')) {
+        await renderAllPosPage(mainArea);
+    } else {
+        await renderHomepage(mainArea);
+    }
+});
+
+// Highlight Nav Link Aktif
+function highlightActiveNavLink() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('#main-navbar-links a');
+    navLinks.forEach(link => {
+        const linkHref = link.getAttribute('href');
+        if (currentPath === linkHref) {
+            link.classList.add('text-red-500', 'font-bold', 'border-b-2', 'border-red-500');
+            link.classList.remove('text-gray-300');
+        } else {
+            link.classList.remove('text-red-500', 'font-bold', 'border-b-2', 'border-red-500');
+            link.classList.add('text-gray-300');
+        }
+    });
+}
+
+// --- RENDER HALAMAN ALL POS ---
+async function renderAllPosPage(container) {
+    container.innerHTML = "<div class='p-12 text-center text-gray-500'>Memuat seluruh pos...</div>";
+    
+    const feedUrl = `https://${window.location.hostname}/feeds/posts/default?alt=json&max-results=99999`;
+
+    try {
+        const res = await fetch(feedUrl);
+        const data = await res.json();
+        allPosAllItems = data.feed.entry || [];
+
+        if (allPosAllItems.length === 0) {
+            container.innerHTML = `
+                <div class='bg-white dark:bg-gray-900 p-8 rounded-lg shadow-sm text-center border border-gray-200 dark:border-gray-800'>
+                    <h1 class='text-xl font-bold text-gray-900 dark:text-white mb-2'>Arsip: All Pos</h1>
+                    <p class='text-sm text-gray-500'>Belum ada postingan yang diterbitkan.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = `
+            <div class='bg-white dark:bg-gray-900 rounded-none md:rounded-lg p-4 md:p-6 shadow-sm mb-6 border border-gray-200/50 dark:border-gray-800'>
+                <h1 class='text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-5 border-b border-gray-200 dark:border-gray-800 pb-4'>
+                    Arsip Lengkap: All Pos (${allPosAllItems.length} Artikel)
+                </h1>
+                <div id='all-pos-list-container' class='space-y-3 md:space-y-4'></div>
+                <div class='mt-8 text-center' id='all-pos-load-more-wrapper' style='display: none;'>
+                    <button onclick='muatLebihAllPos()' class='bg-red-600 hover:bg-red-700 text-white font-semibold text-xs md:text-sm px-6 py-3 rounded-full shadow transition cursor-pointer'>
+                        Muat Pos Selanjutnya <i class='fa-solid fa-chevron-down ml-1 text-xs'></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        container.innerHTML = html;
+        muatLebihAllPos();
+
+    } catch (err) {
+        console.error("Gagal memuat All Pos:", err);
+        container.innerHTML = "<p class='p-6 text-center text-red-500'>Gagal memuat halaman arsip.</p>";
+    }
+}
+
+function muatLebihAllPos() {
+    const listContainer = document.getElementById('all-pos-list-container');
+    const loadMoreWrapper = document.getElementById('all-pos-load-more-wrapper');
+    if (!listContainer) return;
+
+    const nextBatch = allPosAllItems.slice(allPosDisplayedCount, allPosDisplayedCount + allPosBatchSize);
+
+    nextBatch.forEach(entry => {
+        const judul = entry.title.$t;
+        const link = entry.link.find(l => l.rel === 'alternate')?.href || '#';
+        const img = ambilGambar(entry);
+        const label = deteksiKategoriOtomatis(entry);
+        const tanggal = new Date(entry.published.$t).toLocaleDateString('id-ID', {
+            day: 'numeric', month: 'short', year: 'numeric'
+        });
+
+        const itemDiv = document.createElement('div');
+        itemDiv.className = "flex items-center gap-3 p-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 rounded-lg transition border border-gray-100 dark:border-gray-700 shadow-sm";
+        itemDiv.innerHTML = `
+            <a href='${link}' class='shrink-0'>
+                <img src='${img}' alt='${judul}' class='w-24 h-20 md:w-28 md:h-24 object-cover rounded-md'/>
+            </a>
+            <div class='flex-grow min-w-0'>
+                <span class='text-[10px] md:text-xs text-red-600 dark:text-red-400 font-semibold uppercase block mb-1'>${label}</span>
+                <h4 class='text-xs md:text-sm font-bold text-gray-900 dark:text-white line-clamp-2 leading-snug'>
+                    <a href='${link}' class='hover:text-red-600 transition'>${judul}</a>
+                </h4>
+                <div class='text-[11px] text-gray-400 mt-1.5 flex items-center gap-1.5'>
+                    <i class='fa-regular fa-clock'></i>
+                    <span>${tanggal}</span>
+                </div>
+            </div>
+        `;
+        listContainer.appendChild(itemDiv);
+    });
+
+    allPosDisplayedCount += allPosBatchSize;
+
+    if (allPosDisplayedCount >= allPosAllItems.length) {
+        loadMoreWrapper.style.display = 'none';
+    } else {
+        loadMoreWrapper.style.display = 'block';
+    }
+}
+
+// --- FUNGSI PENDUKUNG LAINNYA ---
 document.addEventListener("DOMContentLoaded", function() {
     const postBody = document.getElementById('post-content-body');
     const timeBadge = document.getElementById('reading-time-badge');
@@ -52,16 +184,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const rTime = Math.ceil(wCount / 200);
         timeBadge.innerHTML = `<i class='fa-regular fa-clock mr-1'></i> ${rTime} menit baca`;
     }
-
-    const currentPath = window.location.pathname;
-    const navLinks = document.querySelectorAll('#main-navbar-links a');
-    navLinks.forEach(link => {
-        const linkHref = link.getAttribute('href');
-        if (currentPath === linkHref || (currentPath.includes('/search/label/') && currentPath.toLowerCase() === linkHref.toLowerCase())) {
-            link.classList.add('text-red-500', 'font-bold', 'border-b-2', 'border-red-500');
-            link.classList.remove('text-gray-300');
-        }
-    });
 });
 
 function initAutoCloseAdOnHomepage() {
@@ -73,7 +195,6 @@ function initAutoCloseAdOnHomepage() {
     if (!adBox) return;
 
     let isHidden = false;
-
     function hideAdAutomatically() {
         if (isHidden) return;
         isHidden = true;
@@ -625,23 +746,6 @@ function muatLebihBanyak() {
         if (loadMoreBtn) loadMoreBtn.style.display = 'none';
     }
 }
-
-document.addEventListener("DOMContentLoaded", async function() {
-    updateWeatherByIP();
-    initAutoCloseAdOnHomepage();
-
-    const path = window.location.pathname;
-    const mainArea = document.getElementById('dynamic-content-area');
-    if (!mainArea) return;
-
-    if (path.includes('/search/label/')) {
-        const parts = path.split('/search/label/');
-        let catName = decodeURIComponent(parts[1].replace(/\/$/, '').split('?')[0]);
-        await renderCategoryPage(catName, mainArea);
-    } else {
-        await renderHomepage(mainArea);
-    }
-});
 
 async function renderCategoryPage(categoryName, container) {
     container.innerHTML = `<div class='p-12 text-center text-gray-500'>Memuat berita kategori ${categoryName}...</div>`;
