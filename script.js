@@ -12,7 +12,7 @@ let startPos = 0;
 let currentTranslate = 0;
 let prevTranslate = 0;
 
-// Inisialisasi Tema Manual (Dark/Light) dari LocalStorage[span_1](start_span)[span_1](end_span)
+// Inisialisasi Tema Manual (Dark/Light) dari LocalStorage
 (function() {
     const savedTheme = localStorage.getItem('lintas_theme');
     if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -32,7 +32,7 @@ function toggleManualTheme() {
     }
 }
 
-// Script Reading Progress Bar[span_2](start_span)[span_2](end_span)
+// Script Reading Progress Bar
 window.addEventListener('scroll', function() {
     const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -43,10 +43,11 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (FRIENDLY & DYNAMIC ARROW) ---
+// --- INTERACTIVE DRAGGABLE SCROLLBAR LOGIC (FIXED TOUCH TRACKING) ---
 let scrollIndicator, scrollThumb, hideScrollTimeout;
 let isThumbDragging = false;
 let thumbStartY = 0;
+let startThumbTop = 0;
 let startPageScrollY = 0;
 let lastScrollTop = 0;
 
@@ -90,7 +91,7 @@ function handlePageScroll() {
     
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     
-    // Deteksi arah panah otomatis (naik / turun)[span_3](start_span)[span_3](end_span)
+    // Deteksi arah panah otomatis (naik / turun)
     const arrowIcon = document.getElementById('scroll-arrow-icon');
     if (arrowIcon) {
         if (scrollTop > lastScrollTop) {
@@ -119,6 +120,7 @@ function handlePageScroll() {
 function onThumbDragStart(e) {
     isThumbDragging = true;
     thumbStartY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+    startThumbTop = scrollThumb.offsetTop; // Simpan posisi awal thumb
     startPageScrollY = window.pageYOffset || document.documentElement.scrollTop;
     
     if (scrollIndicator) scrollIndicator.style.opacity = '1';
@@ -137,8 +139,14 @@ function onThumbDragMove(e) {
     const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     
     if (trackHeight > 0 && docHeight > 0) {
-        const scrollDelta = (deltaY / trackHeight) * docHeight;
-        window.scrollTo(0, startPageScrollY + scrollDelta);
+        // Geser posisi thumb secara langsung mengikuti pergerakan jari
+        let newThumbTop = startThumbTop + deltaY;
+        newThumbTop = Math.max(0, Math.min(trackHeight, newThumbTop)); // Batasi agar tidak keluar jalur
+        scrollThumb.style.top = newThumbTop + 'px';
+        
+        // Geser halaman sesuai posisi thumb
+        const scrollRatio = newThumbTop / trackHeight;
+        window.scrollTo(0, scrollRatio * docHeight);
     }
     
     e.preventDefault();
