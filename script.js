@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", async function() {
         const parts = path.split('/search/label/');
         let catName = decodeURIComponent(parts[1].replace(/\/$/, '').split('?')[0]);
         await renderCategoryPage(catName, mainArea);
-    } else if (path.includes('/p/all-pos.html')) {
+    } else if (path.includes('/p/all-pos')) {
         await renderAllPosPage(mainArea);
     } else {
         await renderHomepage(mainArea);
@@ -90,7 +90,8 @@ function highlightActiveNavLink() {
 async function renderAllPosPage(container) {
     container.innerHTML = "<div class='p-12 text-center text-gray-500'>Memuat seluruh pos...</div>";
     
-    const feedUrl = `https://${window.location.hostname}/feeds/posts/default?alt=json&max-results=99999`;
+    // Batasi max-results ke 500 (aman untuk limit JSON Feed Blogger)
+    const feedUrl = `https://${window.location.hostname}/feeds/posts/default?alt=json&max-results=500`;
 
     try {
         const res = await fetch(feedUrl);
